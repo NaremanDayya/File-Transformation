@@ -1,6 +1,4 @@
-@extends('layout')
-@section('title','Add File')
-@section('content')
+<x-layout>
     <div class="container">
         <form action="{{ route("files.store") }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -9,5 +7,4 @@
             ])
         </form>
     </div>
-@endsection
-
+</x-layout>

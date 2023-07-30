@@ -1,6 +1,5 @@
-@extends('layout')
-@section('title', 'Files')
-@section('content')
+<x-layout>
+
 
     <x-alert name="success"></x-alert>
     @if ($errors->any())
@@ -19,7 +18,7 @@
                         <p class="card-text"> {{ $file->description }}</p>
                         <div class="row">
                             <div class="col">
-                                <a href="{{ route('files.download', $file->id) }}" class="btn btn-sm btn-primary">Download</a>
+                                <a href="{{ route('files.download',$file->id) }}" class="btn btn-sm btn-primary">Download</a>
                             </div>
                             <div class="col">
                                 <a href="{{ route('files.share', $file->id) }}"
@@ -44,4 +43,4 @@
             </div>
         @endforeach
     </div>
-@endsection
+</x-layout>

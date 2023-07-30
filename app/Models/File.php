@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -28,4 +28,14 @@ class File extends Model
       return Storage::disk(self::$disk)->delete($path);
 
     }
+    public static function retrievePublicPath($fileName)
+{
+    $publicPath = 'storage/files/' . $fileName;
+
+    if (file_exists($publicPath)) {
+        return response()->download($publicPath , $fileName); 
+    } else {
+       Session::flash("fail","The file does not exist");
+    }
+}
 }

@@ -95,32 +95,76 @@ class FilesController extends Controller
     {
         $file = File::findOrFail($id);
         $fileName = basename($file->file_path);
-
-        // Get the file path relative to the public/storage directory
-        $publicPath = 'storage/files/' . $fileName;
-
-        // Generate the public URL to share
-        $publicUrl = asset($publicPath);
+        // File::retrievePublicPath($fileName);
+        $url = URL::temporarySignedRoute('files.download',
+         now()->addMinutes(5),
+         ['id' => $id]);
+    
         return view('show', [
             'files' => $file,
-            'url' => $publicUrl,
+            'url' => $url,
+            'fileName' => $fileName,
         ]);
     }
+        public function download($id)
+{
+    // $file = File::findOrFail($id);
+    // $fileName = basename($file->file_path);
+    // File::retrievePublicPath($fileName);
+    // // return back();
+    $file = File::findOrFail($id);
+    $fileName = basename($file->file_path);
+    // echo $fileName;
+    $publicPath = 'storage/files/' . $fileName;
+
+    if (file_exists($publicPath)) {
+        return response()->download(public_path($publicPath));        //    dd($filePath);
+
+    } else {
+        abort(404, 'File not found.');
+    }
+
+}
+
+
+    // public function download(Request $request ,$id=null)
+    // {
+    //     $fileName = $request->input('fileName');
+
+    //     if ($id) {
+    //         $file = File::findOrFail($id);
+    //         $fileName = basename($file->file_path);
+    //     }
+    
+    //     elseif (!$fileName && $id == null) {
+    //         abort(400, 'Invalid request. Please provide a file name or an ID.');
+    //     }
+    //    File::retrievePublicPath($fileName);
+    //    return back();
+    // }
   
-
-    public function download($id)
+    public function downloadByUrl()
     {
-        $file = File::findOrFail($id);
-        $fileName = basename($file->file_path);
-        // echo $fileName;
-        $publicPath = 'storage/files/' . $fileName;
+        return view('download');
 
-        if (file_exists($publicPath)) {
-            return response()->download(public_path($publicPath));        //    dd($filePath);
+    }
 
-        } else {
-            abort(404, 'File not found.');
-        }
+    public function downloadUrl(Request $request )
+    {
+        
+    $fileName = $request->input('fileName');
+   
+    // echo $fileName;
+    // $publicPath = 'storage/files/' . $fileName;
+
+    // if (file_exists($publicPath)) {
+    //     return response()->download(public_path($publicPath));        //    dd($filePath);
+
+    // } else {
+    //     abort(404, 'File not found.');
+    // }
+    return File::retrievePublicPath($fileName);
+    // return back();
 
     }
     /**
