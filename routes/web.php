@@ -6,9 +6,9 @@ use App\Http\Controllers\FilesController;
 Route::get('/',function(){
     return view('welcome');
 });
-Route::get('/files/share/{id}', [FilesController::class,'share'])
+Route::get('/files/share/{hash_code}', [FilesController::class,'share'])
 ->name('files.share');
-Route::get('/files/download/{id}', [FilesController::class,'download'])
+Route::get('/files/download/{hash_code}', [FilesController::class,'download'])
 ->name('files.download');
 Route::post('/files/download', [FilesController::class,'downloadUrl'])
 ->name('files.downloadUrl');

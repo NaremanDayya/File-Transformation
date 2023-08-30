@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewFileDownloaded;
 use App\Http\Requests\FileRequest;
 use App\Models\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Str;
 
 class FilesController extends Controller
 {
@@ -44,7 +48,9 @@ class FilesController extends Controller
             $path = File::uploadFile($file);
             $validated['file_path'] = basename($path);
         }
+        $validated['hash_code']=Str::random(10) ;
         $file = File::create($validated);
+        event(new NewFileDownloaded($file));
         return redirect()->route('files.index')
             ->with('success', 'File Created');
     }
@@ -91,38 +97,46 @@ class FilesController extends Controller
         return Redirect::route('files.index');
     }
 
-    public function share($id)
+    public function share($hash_code)
     {
-        $file = File::findOrFail($id);
-        $fileName = basename($file->file_path);
+        $file = File::where('hash_code','=',$hash_code)->first();
+        // $original =$file->getOriginalFileName($file);
+        if($file){
         // File::retrievePublicPath($fileName);
         $url = URL::temporarySignedRoute('files.download',
          now()->addMinutes(5),
-         ['id' => $id]);
+         ['hash_code' => $hash_code]);
     
         return view('show', [
             'files' => $file,
             'url' => $url,
-            'fileName' => $fileName,
+            'hash_code' => $hash_code,
+            // 'original'=> $original,
         ]);
-    }
-        public function download($id)
+    }else{
+       return 'Sorry ,The File Not Found';
+    }}
+
+    public function download($hash_code)
 {
     // $file = File::findOrFail($id);
     // $fileName = basename($file->file_path);
     // File::retrievePublicPath($fileName);
     // // return back();
-    $file = File::findOrFail($id);
-    $fileName = basename($file->file_path);
+    $file = File::where('hash_code','=',$hash_code)->first();
+    if($file){
+        $fileName =$file->file_path;
+        $filePath = File::retrievePublicPath($fileName);
+        Event::dispatch(new NewFileDownloaded($file));
+        return response()->download($filePath);        // event(new NewFileDownloaded($file));
+
+
+
+}
+else{
+  return  'Sorry ,The File Not Found';
+}
     // echo $fileName;
-    $publicPath = 'storage/files/' . $fileName;
-
-    if (file_exists($publicPath)) {
-        return response()->download(public_path($publicPath));        //    dd($filePath);
-
-    } else {
-        abort(404, 'File not found.');
-    }
 
 }
 
@@ -152,8 +166,19 @@ class FilesController extends Controller
     public function downloadUrl(Request $request )
     {
         
-    $fileName = $request->input('fileName');
-   
+    $fileCode = $request->input('fileCode');
+    $file = File::where('hash_code',$fileCode)->first();
+    if($file){
+            $fileName =$file->file_path;
+            $filePath = File::retrievePublicPath($fileName);
+            event(new NewFileDownloaded($file));
+            return response()->download($filePath);
+
+
+    }
+    else{
+        'Sorry ,The File Not Found';
+    }
     // echo $fileName;
     // $publicPath = 'storage/files/' . $fileName;
 
@@ -163,7 +188,7 @@ class FilesController extends Controller
     // } else {
     //     abort(404, 'File not found.');
     // }
-    return File::retrievePublicPath($fileName);
+    
     // return back();
 
     }

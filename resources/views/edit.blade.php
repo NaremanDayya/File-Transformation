@@ -1,6 +1,4 @@
-@extends('layout')
-@section('title','Edit File')
-@section('content')
+<x-layout>
     <div class="container">
         <form action="{{ route("files.update", $files->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -10,4 +8,4 @@
             ])
             </form>
     </div>
-@endsection
+</x-layout>

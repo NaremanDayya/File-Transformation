@@ -29,7 +29,7 @@
               <div class="collapse navbar-collapse" id="navbarResponsive">
                   <ul class="navbar-nav ms-auto my-2 my-lg-0">
                       <li class="nav-item"><a class="nav-link" href="{{ route('files.create') }}"> Upload</a></li>
-                      <li class="nav-item"><a class="nav-link" href="{{ route('files.downloadUrl') }}">Download</a></li>
+                      <li class="nav-item"><a class="nav-link" href="{{ route('files.downloadByUrl') }}">Download</a></li>
                       <li class="nav-item"><a class="nav-link" href="{{ route('files.index') }}">Uploaded Files</a></li>
                   </ul>
               </div>

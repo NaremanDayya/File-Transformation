@@ -5,7 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Listing extends Model
+class FileLog extends Model
 {
     use HasFactory;
+
+    protected $fillable =[
+        'time' , 'ip_address','user_agent', 'file_id'
+    ];
+
+    
 }
