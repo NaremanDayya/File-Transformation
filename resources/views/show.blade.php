@@ -12,7 +12,27 @@
                 <a href="#">{{ $hash_code}}</a>
             
             </div>
-
         </div>
+
+        <h2>Download Details: {{ $files->downloads }} Download</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>IP Address</th>
+                    <th>User Agent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($downloadDetails as $detail)
+                    <tr>
+                        <td>{{ $detail->time }}</td>
+                        <td>{{ $detail->ip_address }}</td>
+                        <td>{{ $detail->user_agent }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
+
 </x-layout>

@@ -12,6 +12,9 @@ class FileLog extends Model
     protected $fillable =[
         'time' , 'ip_address','user_agent', 'file_id'
     ];
-
+    public function file()
+    {
+        return $this->belongsTo(File::class, 'file_id');
+    }
     
 }

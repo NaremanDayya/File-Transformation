@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\NewFileDownloaded;
 use App\Http\Requests\FileRequest;
 use App\Models\File;
+use App\Models\FileLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redirect;
@@ -58,12 +59,6 @@ class FilesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(File $file)
-    {
-        return view('show')->with([
-            'files' => $file,
-        ]);
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -96,22 +91,23 @@ class FilesController extends Controller
         Session::flash('success', 'File Updated');
         return Redirect::route('files.index');
     }
-
+    //a show page
     public function share($hash_code)
     {
         $file = File::where('hash_code','=',$hash_code)->first();
+        // dd($file);
         // $original =$file->getOriginalFileName($file);
         if($file){
         // File::retrievePublicPath($fileName);
         $url = URL::temporarySignedRoute('files.download',
          now()->addMinutes(5),
          ['hash_code' => $hash_code]);
-    
+         $downloadDetails = $file->downloadDetails;
         return view('show', [
             'files' => $file,
             'url' => $url,
             'hash_code' => $hash_code,
-            // 'original'=> $original,
+            'downloadDetails'=> $downloadDetails,
         ]);
     }else{
        return 'Sorry ,The File Not Found';

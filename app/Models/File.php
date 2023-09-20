@@ -53,4 +53,9 @@ class File extends Model
         //     abort(404, 'File not found.');
         // }
     }
+
+    public function downloadDetails()
+{
+    return $this->hasMany(FileLog::class, 'file_id');
+}
 }
